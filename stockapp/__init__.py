@@ -1,0 +1,1 @@
+from stockapp.view import app

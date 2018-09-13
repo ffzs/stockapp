@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>stock-graph</title>
+
+    <!--引入 Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <!--引入Bootstrap core js-->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+    <!--建立一个搜索的form-->
+      <form style="padding-top: 70px" method="post">
+        <div class="form-row justify-content-center">
+          <div class="col-7">
+            <input class="form-control" type="search" placeholder="输入股票代码.." name="search" id="search1" style="margin-left: 10px">
+          </div>
+          <div class="col-1">
+            <button class="btn btn-outline-success" type="submit">搜索</button>
+          </div>
+        </div>
+      </form>
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <div class="alert alert-light" role="alert">
+            <strong>{{sign}}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-10">
+          <div id="myDiv" style="height: 500px"></div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-10">
+          <div id="graph" style="height: 400px"></div>
+        </div>
+      </div>
+    </div>
+    <!--引用plotly.js-->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+      <!---->
+      var data = eval('{{data|safe}}');
+      var stock_name = '{{stock_name|safe}}';
+
+      var trace = {
+        x: data[0],
+        close: data[1],
+        high: data[2],
+        low: data[3],
+        open: data[4],
+
+        // cutomise colors
+        increasing: {line: {color: 'red'}},
+        decreasing: {line: {color: 'green'}},
+
+        type: 'candlestick',
+        xaxis: 'x',
+        yaxis: 'y'
+      };
+
+      var data = [trace];
+
+      var layout = {
+        dragmode: 'zoom',
+        showlegend: false,
+        xaxis: {
+          autorange: true,
+          title: stock_name,
+           rangeselector: {
+              x: 0,
+              y: 1.2,
+              xanchor: 'left',
+              font: {size:10},
+              buttons: [{
+                  step: 'month',
+                  stepmode: 'backward',
+                  count: 1,
+                  label: '1 month'
+              }, {
+                  step: 'month',
+                  stepmode: 'backward',
+                  count: 6,
+                  label: '6 months'
+              }, {
+                  step: 'all',
+                  label: 'All dates'
+              }]
+            }
+        },
+        yaxis: {
+          autorange: true,
+        }
+      };
+
+      Plotly.plot('myDiv', data, layout);
+    </script>
+    <script type="text/javascript">
+
+      var header = JSON.parse('{{header|safe}}');
+      var values = eval('{{data|safe}}');
+
+      var data = [{
+        type: 'table',
+        header: {
+          values: header ,
+          align: ["left", "center"],
+          line: {width: 1, color: '#506784'},
+          fill: {color: '#ff8c5a'},
+          font: {family: "Arial", size: 12, color: "white"}
+        },
+        cells: {
+          values: values,
+          align: ["center", "center"],
+          line: {color: "#506784", width: 1},
+           fill: {color: ['#fadafe', 'white']},
+          font: {family: "Arial", size: 11, color: ["#506784"]}
+        }
+      }];
+
+      Plotly.plot('graph', data);
+
+    </script>
+  </body>
+</html>
