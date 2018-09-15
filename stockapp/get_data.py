@@ -6,7 +6,7 @@ import pandas as pd
 def get_stock_data(search):
     try:
         # 创建基础类
-        engine = create_engine('mysql+pymysql://ffzs:666@localhost:3306/stock')
+        engine = create_engine('mysql+pymysql://ffzs:666@172.17.0.1:3306/stock')
         BaseModel = declarative_base()
         # 初始话数据库记过，与数据库连接
         BaseModel.metadata.create_all(engine)
@@ -23,8 +23,9 @@ def get_stock_data(search):
         con.close()
         return data, stock_name, header
     except:
-        return False, False
+        return False, False, False
 
 
-# data = get_stock_data('000555')
+# _, x , _ = get_stock_data('000555')
+# print(x)
 #
